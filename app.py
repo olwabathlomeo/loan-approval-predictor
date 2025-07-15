@@ -1,44 +1,47 @@
 
 import streamlit as st
 import pandas as pd
-import numpy as np
-import pickle
+import joblib
 
-# Try loading the saved model
-try:
-    model = pickle.load(open('best_rf_model.pkl', 'rb'))
-except FileNotFoundError:
-    st.error("❌ Model file not found. Please make sure 'best_rf_model.pkl' is in the same folder as this app.py file.")
-    st.stop()
+# Load the model
+model = joblib.load("best_rf_model.pkl")
 
-# App title and description
 st.title("🏦 Loan Approval Prediction App")
-st.write("Enter applicant details below to check if the loan is likely to be approved.")
+st.markdown("Enter applicant details below to check if the loan is likely to be approved.")
 
-# Collecting user inputs
-income = st.number_input("📥 Annual Income", min_value=0, format="%d")
-loan_amount = st.number_input("💰 Loan Amount", min_value=0, format="%d")
-cibil_score = st.slider("📊 CIBIL Score", min_value=300, max_value=900, step=1)
+# === INPUT FIELDS ===
+no_of_dependents = st.number_input("👨‍👩‍👧 Number of Dependents", min_value=0, step=1)
 education = st.selectbox("🎓 Education Level", ["Graduate", "Not Graduate"])
 self_employed = st.selectbox("💼 Self Employed?", ["No", "Yes"])
+income_annum = st.number_input("📥 Annual Income", min_value=0)
+loan_amount = st.number_input("💰 Loan Amount", min_value=0)
+loan_term = st.number_input("📆 Loan Term (Years)", min_value=1)
+cibil_score = st.slider("📊 CIBIL Score", 300, 900)
+res_assets = st.number_input("🏠 Residential Assets Value", min_value=0)
+com_assets = st.number_input("🏢 Commercial Assets Value", min_value=0)
+lux_assets = st.number_input("🚗 Luxury Assets Value", min_value=0)
+bank_assets = st.number_input("🏦 Bank Asset Value", min_value=0)
 
-# Encode the categorical values just like in training
-education_encoded = 0 if education == "Graduate" else 1
-self_employed_encoded = 0 if self_employed == "No" else 1
+# === ENCODING ===
+education = 0 if education == "Graduate" else 1
+self_employed = 0 if self_employed == "No" else 1
 
-# Prepare input data for prediction
-features = np.array([[income, loan_amount, cibil_score, education_encoded, self_employed_encoded]])
+# === PREDICTION ===
+if st.button("🔍 Predict Loan Status"):
+    input_data = pd.DataFrame([{
+        "no_of_dependents": no_of_dependents,
+        "education": education,
+        "self_employed": self_employed,
+        "income_annum": income_annum,
+        "loan_amount": loan_amount,
+        "loan_term": loan_term,
+        "cibil_score": cibil_score,
+        "residential_assets_value": res_assets,
+        "commercial_assets_value": com_assets,
+        "luxury_assets_value": lux_assets,
+        "bank_asset_value": bank_assets
+    }])
 
-# Prediction
-if st.button("🔍 Predict Loan Approval"):
-    prediction = model.predict(features)[0]
-    prob = model.predict_proba(features)[0][prediction]
-
-    if prediction == 0:
-        st.success(f"✅ Loan Approved with confidence {prob:.2%}")
-    else:
-        st.error(f"❌ Loan Rejected with confidence {prob:.2%}")
-
-# Footer
-st.markdown("---")
-st.caption("Built using Streamlit | ML Model: Random Forest Classifier")
+    prediction = model.predict(input_data)[0]
+    status = "✅ Approved" if prediction == 0 else "❌ Rejected"
+    st.success(f"Loan Status: {status}")
