@@ -41,7 +41,6 @@ This is a deployed machine learning app that predicts whether a loan will be **A
 
 ---
 
-## 📁 Project Structure
 
 ## 📁 Project Structure
 
