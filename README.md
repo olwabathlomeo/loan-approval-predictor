@@ -103,18 +103,6 @@ loan-approval-predictor/
 
 ---
 
-## ✅ Now what?
-
-1. Save this as `README.md` in your project folder  
-2. Push it to GitHub:
-   ```bash
-   git add README.md
-   git commit -m "Finalized complete README with structure and visuals"
-   git push
-   ```
-
----
-
 ## 👤 Author
 
 **Olwa Bathlomeo Onyango**  
