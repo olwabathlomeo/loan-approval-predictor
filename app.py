@@ -64,8 +64,10 @@ input_data = pd.DataFrame({
    'income_annum': [income_annum],
     'loan_amount': [loan_amount],
     'cibil_score': [cibil_score],
-    'education': [education_map[education]],
-    'self_employed': [self_emp_map[self_employed]],
+    education_map = {'Graduate': 1, 'Not Graduate': 0}
+    'education': [1 if education == "Graduate" else 0],
+    education_map = {'Self-employed': 1, 'Not Self-employed': 0}
+    'self_employed': [1 if self_employed == "Yes" else 0],
     'asset_value': [asset_value]
 })
 
