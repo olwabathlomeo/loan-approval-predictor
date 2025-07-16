@@ -1,8 +1,4 @@
-readme_content = """# 🏦 Loan Approval Predictor - Machine Learning App
 
-Predict whether a loan will be **Approved** or **Rejected** using applicant data like income, loan amount, CIBIL score, and employment status. Built with real-world data, trained using Random Forest, and deployed as a Streamlit web application.
-
----
 
 ## 📊 Project Overview
 
