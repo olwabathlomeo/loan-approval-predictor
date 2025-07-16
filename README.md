@@ -38,13 +38,13 @@ loan-approval-predictor/
 
 ## 🧪 Features Used
 
-| Feature          | Description                         |
-|------------------|-------------------------------------|
-| `income_annum`   | Annual income of the applicant      |
-| `loan_amount`    | Requested loan amount               |
-| `cibil_score`    | Credit score of the applicant       |
-| `education`      | Graduate / Not Graduate             |
-| `self_employed`  | Yes / No                            |
+| Feature         | Description                      |
+|----------------|----------------------------------|
+| `income_annum` | Annual income of the applicant   |
+| `loan_amount`  | Requested loan amount            |
+| `cibil_score`  | Credit score of the applicant    |
+| `education`    | Graduate / Not Graduate          |
+| `self_employed`| Yes / No                         |
 
 ---
 
@@ -105,7 +105,7 @@ loan-approval-predictor/
 
 ## ✅ Now what?
 
-1. Save this as `README.md` in your project folder.  
+1. Save this as `README.md` in your project folder  
 2. Push it to GitHub:
    ```bash
    git add README.md
@@ -118,11 +118,11 @@ loan-approval-predictor/
 ## 👤 Author
 
 **Olwa Bathlomeo Onyangi**  
-📧 bathlomeoolwa@gmail.com  
-🌐 [GitHub Profile](https://github.com/bathlomeoolwa)
+📧 olwabathlomeo@gmail.com  
+🌐 [GitHub Profile](https://github.com/olwabathlomeo)
 
 ---
 
 ## 🛡️ License
 
-This project is licensed under the MIT License — feel free to use, modify, and share it.
+This project is licensed under the MIT License — feel free t
