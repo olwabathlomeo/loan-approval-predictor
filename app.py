@@ -1,4 +1,3 @@
-import streamlit as st
 import pandas as pd
 import numpy as np
 import pickle
@@ -20,9 +19,6 @@ income_annum = st.number_input("📥 Annual Income", min_value=0)
 loan_amount = st.number_input("💰 Loan Amount", min_value=0)
 loan_term = st.number_input("⏳ Loan Term (in months)", min_value=1)
 cibil_score = st.slider("📊 CIBIL Score", 300, 900, step=1)
-commercial_assets_value = st.number_input("🏢 Commercial Asset Value", min_value=0)
-luxury_assets_value = st.number_input("💎 Luxury Asset Value", min_value=0)
-bank_asset_value = st.number_input("🏦 Bank Asset Value", min_value=0)
 
 # Encode categorical values
 education_encoded = 1 if education == "Graduate" else 0
