@@ -5,7 +5,8 @@ import numpy as np
 import pickle
 
 # Load the model
-model = pickle.load(open('models/best_rf_model.pkl', 'rb'))
+model = pickle.load(open('best_rf_model.pkl', 'rb'))
+
 
 st.title("🏦 Loan Approval Predictor")
 
