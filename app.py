@@ -70,7 +70,11 @@ input_data = pd.DataFrame({
     'cibil_score': [cibil_score],
     'education': [education_encoded],
     'self_employed': [self_employed_encoded],
-    'asset_value': [asset_value]
+    residential_assets_value = st.number_input("🏠 Residential Asset Value", min_value=0)
+commercial_assets_value = st.number_input("🏢 Commercial Asset Value", min_value=0)
+luxury_assets_value = st.number_input("💎 Luxury Asset Value", min_value=0)
+bank_asset_value = st.number_input("🏦 Bank Asset Value", min_value=0)
+
 })
 
 
