@@ -117,7 +117,7 @@ loan-approval-predictor/
 
 ## 👤 Author
 
-**Olwa Bathlomeo Onyangi**  
+**Olwa Bathlomeo Onyango**  
 📧 bathlomeoolwa@gmail.com  
 🌐 [GitHub Profile](https://github.com/bathlomeoolwa)
 
