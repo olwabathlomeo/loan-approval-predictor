@@ -1,69 +1,128 @@
-# 🏦 Loan Approval Predictor
+# 🏦 Loan Approval Predictor - Machine Learning App
 
-This is a deployed machine learning app that predicts whether a loan will be **Approved** or **Rejected** based on applicant details such as income, loan amount, credit score, and asset values.
-
-🔗 **Live App:**  
-👉 [Click to try the Loan Approval Predictor](https://loan-approval-predictor-6btsujxdvwftcdsrtqbrpp.streamlit.app)
+Predict whether a loan will be **Approved** or **Rejected** using applicant data like income, loan amount, CIBIL score, and employment status. Built with real-world data, trained using Random Forest, and deployed as a Streamlit web application.
 
 ---
 
-## 🚀 Features
+## 📊 Project Overview
 
-- ✅ Real-time loan approval prediction  
-- ✅ Interactive and user-friendly web form (no coding needed)  
-- ✅ Confidence score shown with prediction  
-- ✅ Fully online, no installation required  
+Loan evaluation is often slow, biased, or based on outdated methods. Our ML-powered app brings speed, accuracy, and fairness to the loan approval process.
 
----
-
-## 🧾 Input Fields
-
-- Number of Dependents  
-- Education Level (Graduate / Not Graduate)  
-- Self Employment Status (Yes / No)  
-- Annual Income  
-- Loan Amount  
-- Loan Term (Years)  
-- CIBIL Score (300–900)  
-- Residential Asset Value  
-- Commercial Asset Value  
-- Luxury Asset Value  
-- Bank Asset Value  
+- ✔️ Predictive model with over 86% accuracy  
+- 💡 Trained on cleaned and encoded real-world loan data  
+- 🖥️ Streamlit interface for easy testing and visualization  
 
 ---
 
-## 🧠 Model Info
-
-- **Algorithm**: Random Forest Classifier  
-- **Trained on**: Cleaned loan approval dataset  
-- **Target variable**: `loan_status`  
-- **Evaluation Accuracy**: >98%  
-
----
-
-
-## 📁 Project Structure
+## 📂 Project Structure
 
 ```
 loan-approval-predictor/
-├── app.py                  # Main Streamlit app
-├── best_rf_model.pkl       # Trained ML model
-├── requirements.txt        # Python dependencies
-└── README.md               # Project documentation
+├── data/
+│   └── Loan_approval_dataset.csv
+├── notebooks/
+│   └── eda_model_building.ipynb
+├── app/
+│   └── streamlit_app.py
+├── models/
+│   └── best_rf_model.pkl
+├── images/
+│   ├── CIBIL_score_boxplot.png
+│   ├── feature_importance.png
+│   ├── confusion_matrix.png
+├── README.md
+├── requirements.txt
 ```
-
-
-## 👨‍💻 Author
-
-**Olwa Bathlomeo Onyango**  
-Loan Approval Project, IIPS – 2025 Cohort
 
 ---
 
-## 🙏 Acknowledgements
+## 🧪 Features Used
 
-Special thanks to the IIPS team and mentors who supported this project.  
-Built with ❤️ using Python, scikit-learn, and Streamlit.
+| Feature          | Description                         |
+|------------------|-------------------------------------|
+| `income_annum`   | Annual income of the applicant      |
+| `loan_amount`    | Requested loan amount               |
+| `cibil_score`    | Credit score of the applicant       |
+| `education`      | Graduate / Not Graduate             |
+| `self_employed`  | Yes / No                            |
 
+---
 
+## 🤖 Model Performance
 
+- **Random Forest Classifier**
+- Accuracy: `86.3%`
+- Evaluation:
+  - Precision, Recall, F1-Score
+  - Confusion Matrix
+  - Feature Importance Visualization
+
+---
+
+## 🌐 App Demo (Streamlit)
+
+> The app allows users to input values and receive instant predictions.
+
+### Example Inputs:
+- Annual Income: `550,000`
+- Loan Amount: `150,000`
+- CIBIL Score: `725`
+- Education: `Graduate`
+- Self-Employed: `No`
+
+### Output:
+**Loan Approved with 87.5% confidence**
+
+---
+
+## 📸 Visualizations
+
+![CIBIL Score Boxplot](images/CIBIL_score_boxplot.png)  
+![Feature Importance](images/feature_importance.png)  
+![Confusion Matrix](images/confusion_matrix.png)
+
+---
+
+## ⚙️ How to Run Locally
+
+1. Clone this repository  
+   ```bash
+   git clone https://github.com/your-username/loan-approval-predictor.git
+   cd loan-approval-predictor
+   ```
+
+2. Install dependencies  
+   ```bash
+   pip install -r requirements.txt
+   ```
+
+3. Run the app  
+   ```bash
+   streamlit run app/streamlit_app.py
+   ```
+
+---
+
+## ✅ Now what?
+
+1. Save this as `README.md` in your project folder.  
+2. Push it to GitHub:
+   ```bash
+   git add README.md
+   git commit -m "Finalized complete README with structure and visuals"
+   git push
+   ```
+
+---
+
+## 👤 Author
+
+**Olwa Bathlomeo Onyangi**  
+📧 bathlomeoolwa@gmail.com  
+🌐 [GitHub Profile](https://github.com/bathlomeoolwa)
+
+---
+
+## 🛡️ License
+
+This project is licensed under the MIT License — feel free to use, modify, and share it.
