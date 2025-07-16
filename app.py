@@ -60,16 +60,19 @@ if st.button("🔍 Predict Loan Approval"):
 
 
 # Create DataFrame
+education_encoded = 1 if education == "Graduate" else 0
+self_employed_encoded = 1 if self_employed == "Yes" else 0
+
+# Now build the input DataFrame
 input_data = pd.DataFrame({
-   'income_annum': [income_annum],
+    'income_annum': [income_annum],
     'loan_amount': [loan_amount],
     'cibil_score': [cibil_score],
-    education_map = {'Graduate': 1, 'Not Graduate': 0}
-    'education': [1 if education == "Graduate" else 0],
-    education_map = {'Self-employed': 1, 'Not Self-employed': 0}
-    'self_employed': [1 if self_employed == "Yes" else 0],
+    'education': [education_encoded],
+    'self_employed': [self_employed_encoded],
     'asset_value': [asset_value]
 })
+
 
 if st.button("Predict Loan Approval"):
     prediction = model.predict(input_data)
