@@ -85,7 +85,6 @@ input_data = pd.DataFrame({
 })
 
 
-
 if st.button("Predict Loan Approval"):
     prediction = model.predict(input_data)
     confidence = model.predict_proba(input_data)[0][int(prediction[0])] * 100
