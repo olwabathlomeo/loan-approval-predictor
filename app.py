@@ -61,7 +61,7 @@ if st.button("🔍 Predict Loan Approval"):
 
 # Create DataFrame
 input_data = pd.DataFrame({
-    'income_annum': [income],
+   'income_annum': [income_annum],
     'loan_amount': [loan_amt],
     'cibil_score': [cibil],
     'education': [education_map[education]],
