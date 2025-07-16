@@ -1,47 +1,40 @@
 
 import streamlit as st
 import pandas as pd
-import joblib
+import numpy as np
+import pickle
 
 # Load the model
-model = joblib.load("best_rf_model.pkl")
+model = pickle.load(open('models/best_rf_model.pkl', 'rb'))
 
-st.title("🏦 Loan Approval Prediction App")
-st.markdown("Enter applicant details below to check if the loan is likely to be approved.")
+st.title("🏦 Loan Approval Predictor")
 
-# === INPUT FIELDS ===
-no_of_dependents = st.number_input("👨‍👩‍👧 Number of Dependents", min_value=0, step=1)
-education = st.selectbox("🎓 Education Level", ["Graduate", "Not Graduate"])
-self_employed = st.selectbox("💼 Self Employed?", ["No", "Yes"])
-income_annum = st.number_input("📥 Annual Income", min_value=0)
-loan_amount = st.number_input("💰 Loan Amount", min_value=0)
-loan_term = st.number_input("📆 Loan Term (Years)", min_value=1)
-cibil_score = st.slider("📊 CIBIL Score", 300, 900)
-res_assets = st.number_input("🏠 Residential Assets Value", min_value=0)
-com_assets = st.number_input("🏢 Commercial Assets Value", min_value=0)
-lux_assets = st.number_input("🚗 Luxury Assets Value", min_value=0)
-bank_assets = st.number_input("🏦 Bank Asset Value", min_value=0)
+# User inputs — Only current features used
+income = st.number_input("Annual Income", min_value=0)
+loan_amt = st.number_input("Loan Amount", min_value=0)
+cibil = st.slider("CIBIL Score", min_value=300, max_value=900, value=700)
+education = st.selectbox("Education", ["Graduate", "Not Graduate"])
+self_employed = st.selectbox("Self Employed", ["Yes", "No"])
+asset_value = st.number_input("Asset Value", min_value=0)
 
-# === ENCODING ===
-education = 0 if education == "Graduate" else 1
-self_employed = 0 if self_employed == "No" else 1
+# Map categorical inputs
+education_map = {"Graduate": 1, "Not Graduate": 0}
+self_emp_map = {"Yes": 1, "No": 0}
 
-# === PREDICTION ===
-if st.button("🔍 Predict Loan Status"):
-    input_data = pd.DataFrame([{
-        "no_of_dependents": no_of_dependents,
-        "education": education,
-        "self_employed": self_employed,
-        "income_annum": income_annum,
-        "loan_amount": loan_amount,
-        "loan_term": loan_term,
-        "cibil_score": cibil_score,
-        "residential_assets_value": res_assets,
-        "commercial_assets_value": com_assets,
-        "luxury_assets_value": lux_assets,
-        "bank_asset_value": bank_assets
-    }])
+# Create DataFrame
+input_data = pd.DataFrame({
+    'income_annum': [income],
+    'loan_amount': [loan_amt],
+    'cibil_score': [cibil],
+    'education': [education_map[education]],
+    'self_employed': [self_emp_map[self_employed]],
+    'asset_value': [asset_value]
+})
 
-    prediction = model.predict(input_data)[0]
-    status = "✅ Approved" if prediction == 0 else "❌ Rejected"
-    st.success(f"Loan Status: {status}")
+if st.button("Predict Loan Approval"):
+    prediction = model.predict(input_data)
+    confidence = model.predict_proba(input_data)[0][int(prediction[0])] * 100
+    if prediction[0] == 1:
+        st.success(f"✅ Loan Approved with {confidence:.2f}% confidence.")
+    else:
+        st.error(f"❌ Loan Rejected with {confidence:.2f}% confidence.")
