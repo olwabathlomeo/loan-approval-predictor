@@ -1,6 +1,6 @@
 # 🏦 Loan Approval Predictor - Machine Learning App
 
-Predict whether a loan will be **Approved** or **Rejected** using applicant data like income, loan amount, CIBIL score, and employment status. Built with real-world data, trained using Random Forest, and deployed as a Streamlit web application.
+Predict whether a loan will be **Approved** or **Rejected** using applicant data like income, loan amount, CIBIL score, employment status, and asset value. Built with real-world data, trained using Random Forest, and deployed as a Streamlit web application.
 
 ---
 
@@ -45,30 +45,33 @@ loan-approval-predictor/
 | `cibil_score`    | Credit score of the applicant       |
 | `education`      | Graduate / Not Graduate             |
 | `self_employed`  | Yes / No                            |
+| `asset_value`    | Value of applicant's assets         |
 
 ---
 
 ## 🤖 Model Performance
 
-- **Model:** Random Forest Classifier  
-- **Accuracy:** 86.3%  
-- **Evaluation Metrics:**
-  - Precision, Recall, F1-Score
-  - Confusion Matrix
-  - Feature Importance Visualization
+- **Model Used**: Random Forest Classifier  
+- **Accuracy**: `86.3%`
+
+### Evaluation Metrics:
+- Precision, Recall, F1-Score  
+- Confusion Matrix  
+- Feature Importance Plot  
 
 ---
 
 ## 🌐 App Demo (Streamlit)
 
-> The app allows users to input values and receive instant predictions.
+The app allows users to input values and receive instant predictions.
 
 **Example Inputs:**
-- Annual Income: `550,000`
-- Loan Amount: `150,000`
+- Annual Income: `550000`
+- Loan Amount: `150000`
 - CIBIL Score: `725`
 - Education: `Graduate`
 - Self-Employed: `No`
+- Asset Value: `200000`
 
 **Output:**
 ✅ Loan Approved with 87.5% confidence
@@ -85,18 +88,18 @@ loan-approval-predictor/
 
 ## ⚙️ How to Run Locally
 
-1. Clone this repository  
+1. **Clone the Repository**  
    ```bash
    git clone https://github.com/your-username/loan-approval-predictor.git
    cd loan-approval-predictor
    ```
 
-2. Install dependencies  
+2. **Install Dependencies**  
    ```bash
    pip install -r requirements.txt
    ```
 
-3. Run the app  
+3. **Run the App**  
    ```bash
    streamlit run app/streamlit_app.py
    ```
@@ -105,12 +108,12 @@ loan-approval-predictor/
 
 ## 👤 Author
 
-**Olwa Bathlomeo Onyango**  
-📧 olwabathlomeo@gmail.com  
-🌐 [GitHub Profile](https://github.com/olwabathlomeo)
+**Olwa Bathlomeo Onyangi**  
+📧 bathlomeoolwa@gmail.com  
+🌐 [GitHub Profile](https://github.com/bathlomeoolwa)
 
 ---
 
 ## 🛡️ License
 
-This project is licensed under the MIT License — feel free to use, modify, and share it.
+This project is licensed under the **MIT License** — feel free to use, modify, and share it.
