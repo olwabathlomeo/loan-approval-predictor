@@ -118,11 +118,11 @@ loan-approval-predictor/
 ## 👤 Author
 
 **Olwa Bathlomeo Onyangi**  
-📧 olwabathlomeo@gmail.com  
-🌐 [GitHub Profile](https://github.com/olwabathlomeo)
+📧 bathlomeoolwa@gmail.com  
+🌐 [GitHub Profile](https://github.com/bathlomeoolwa)
 
 ---
 
 ## 🛡️ License
 
-This project is licensed under the MIT License — feel free t
+This project is licensed under the MIT License — feel free to use, modify, and share it.
