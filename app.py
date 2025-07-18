@@ -72,12 +72,19 @@ if st.button("🔍 Predict Loan Approval"):
     else:
         st.error(f"❌ Loan Rejected with {confidence:.2f}% confidence.")
 
-    st.markdown("### 🔍 SHAP Explanation (Feature Influence)")
-    
+        st.markdown("### 🔍 SHAP Explanation (Feature Influence)")
+
     # SHAP value computation and plotting
     shap_values = explainer.shap_values(input_data)
-    shap_values_instance = shap_values[1][0]  # Class 1 explanation
-    expected_value = explainer.expected_value[1]
+
+    # Handle binary classification (single SHAP value array)
+    shap_values_instance = shap_values[0]  # SHAP values for this instance
+    expected_value = explainer.expected_value  # For binary classifier it's a single float
+
+    # Plot the SHAP waterfall
+    fig, ax = plt.subplots(figsize=(10, 5))
+    shap.plots._waterfall.waterfall_legacy(expected_value, shap_values_instance[0], input_data.iloc[0])
+    st.pyplot(fig)
 
     # Plot the SHAP waterfall
     fig, ax = plt.subplots(figsize=(10, 5))
