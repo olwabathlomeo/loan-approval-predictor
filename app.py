@@ -66,12 +66,22 @@ if st.button("🔍 Predict Loan Status"):
         st.markdown("### 🧠 SHAP Feature Impact")
         shap_values = explainer.shap_values(input_data)
         pred_class = int(prediction)
+        # --- FIX: Always extract the single explanation as a 1D array ---
         if isinstance(shap_values, list):
+            # Each item in shap_values is (n_samples, n_features), so [sample][feature]
+            # For a single sample, shap_values[pred_class][0] is shape (n_features,)
             values = shap_values[pred_class][0]
             base_value = explainer.expected_value[pred_class]
-        else:
+        elif shap_values.ndim == 3:
+            # shape (n_samples, n_classes, n_features)
+            values = shap_values[0, pred_class]
+            base_value = explainer.expected_value[pred_class]
+        elif shap_values.ndim == 2 and shap_values.shape[0] == 1:
+            # shape (1, n_features)
             values = shap_values[0]
             base_value = explainer.expected_value
+        else:
+            raise ValueError("Unexpected shape for shap_values: {}".format(shap_values.shape))
 
         fig, ax = plt.subplots()
         shap.waterfall_plot(
