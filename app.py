@@ -86,11 +86,17 @@ if st.button("🔍 Predict Loan Approval"):
         values=shap_values_instance,
         base_values=expected_value,
         data=input_data.iloc[0],
-        feature_names=input_data.columns
-    )
+           # SHAP explanation
+    st.markdown("### 🔍 SHAP Explanation (Feature Influence)")
 
-    # Waterfall plot (matplotlib)
+    # Get SHAP values (list for binary classification)
+    shap_values = explainer.shap_values(input_data)
+
+    # Choose class 1 explanation
+    shap_values_instance = shap_values[1][0]
+    expected_value = explainer.expected_value[1]
+
+    # Waterfall plot using legacy method
     fig, ax = plt.subplots(figsize=(10, 5))
-    shap.plots.waterfall(explanation, max_display=7, show=False)
+    shap.plots._waterfall.waterfall_legacy(expected_value, shap_values_instance, input_data.iloc[0])
     st.pyplot(fig)
-
