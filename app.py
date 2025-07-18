@@ -2,17 +2,23 @@ import streamlit as st
 import pandas as pd
 import numpy as np
 import pickle
+import shap
+import matplotlib.pyplot as plt
 
 # Load the trained model
 with open('best_rf_model.pkl', 'rb') as model_file:
     model = pickle.load(model_file)
+
+# Load the SHAP explainer
+with open('shap_explainer.pkl', 'rb') as explainer_file:
+    explainer = pickle.load(explainer_file)
 
 # App config
 st.set_page_config(page_title="Loan Approval Predictor", page_icon="🏦")
 st.title("🏦 Loan Approval Predictor")
 st.markdown("This app predicts whether a loan will be **Approved** or **Rejected** based on applicant data.")
 
-# User inputs for all required features
+# User inputs
 no_of_dependents = st.number_input("👨‍👩‍👧 Number of Dependents", min_value=0)
 education = st.selectbox("🎓 Education Level", ["Graduate", "Not Graduate"])
 self_employed = st.selectbox("💼 Self Employed?", ["Yes", "No"])
@@ -66,3 +72,20 @@ if st.button("🔍 Predict Loan Approval"):
     else:
         st.error(f"❌ Loan Rejected with {confidence:.2f}% confidence.")
 
+    # SHAP explanation
+    st.markdown("### 🔍 SHAP Explanation (Feature Influence)")
+
+    shap_values = explainer.shap_values(input_data)
+
+    # For binary classification (TreeExplainer returns a list)
+    if isinstance(shap_values, list):
+        shap_values_instance = shap_values[1][0]  # for class 1
+        expected_value = explainer.expected_value[1]
+    else:
+        shap_values_instance = shap_values[0]
+        expected_value = explainer.expected_value
+
+    # Waterfall plot (matplotlib)
+    st.set_option('deprecation.showPyplotGlobalUse', False)
+    shap.plots._waterfall.waterfall_legacy(expected_value, shap_values_instance, input_data.iloc[0])
+    st.pyplot(bbox_inches='tight')
