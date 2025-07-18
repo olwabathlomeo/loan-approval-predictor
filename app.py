@@ -86,6 +86,6 @@ if st.button("🔍 Predict Loan Approval"):
         expected_value = explainer.expected_value
 
     # Waterfall plot (matplotlib)
-    st.set_option('deprecation.showPyplotGlobalUse', False)
+    #st.set_option('deprecation.showPyplotGlobalUse', False)
     shap.plots._waterfall.waterfall_legacy(expected_value, shap_values_instance, input_data.iloc[0])
     st.pyplot(bbox_inches='tight')
