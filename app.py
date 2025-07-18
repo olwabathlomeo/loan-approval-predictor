@@ -11,7 +11,7 @@ st.title("🏦 Loan Approval Predictor")
 st.markdown("This app predicts whether a loan will be **Approved** or **Rejected** based on applicant data.")
 
 # Set matplotlib to not show global pyplot deprecation warning
-st.set_option('deprecation.showPyplotGlobalUse', False)
+#st.set_option('deprecation.showPyplotGlobalUse', False)
 
 # Load trained model
 if not os.path.exists('best_rf_model.pkl') or not os.path.exists('shap_explainer.pkl'):
