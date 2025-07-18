@@ -76,19 +76,23 @@ if st.button("🔍 Predict Loan Approval"):
     # Compute SHAP values
     shap_values = explainer.shap_values(input_data)
 
-    # Handle binary classifier: pick SHAP values for the positive class
+    # Handle binary classifier: pick SHAP values for class 1
     if isinstance(shap_values, list) and len(shap_values) == 2:
-        shap_values_row = shap_values[1][0]  # 1D array
-        expected_value = explainer.expected_value[1]
+        shap_vals = shap_values[1][0]  # Class 1 SHAP values
+        base_value = explainer.expected_value[1]
     else:
-        shap_values_row = shap_values[0]  # fallback
-        expected_value = explainer.expected_value
+        shap_vals = shap_values[0]
+        base_value = explainer.expected_value
 
-    # Ensure feature values are passed as a Series
-    feature_values_row = input_data.iloc[0]
+    # Create SHAP Explanation object
+    explanation = shap.Explanation(
+        values=shap_vals,
+        base_values=base_value,
+        data=input_data.iloc[0].values,
+        feature_names=input_data.columns
+    )
 
-    # Plot the SHAP waterfall chart
-    fig, ax = plt.subplots(figsize=(10, 5))
-    shap.plots._waterfall.waterfall_legacy(expected_value, shap_values_row, feature_values_row)
+    # Plot SHAP waterfall chart (modern method)
+    fig, ax = plt.subplots(figsize=(10, 6))
+    shap.plots.waterfall(explanation, max_display=11, show=False)
     st.pyplot(fig)
-
