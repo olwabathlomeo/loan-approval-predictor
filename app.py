@@ -62,7 +62,7 @@ input_data = pd.DataFrame([[
     'bank_asset_value'
 ])
 
-# Prediction
+# Prediction and SHAP
 if st.button("🔍 Predict Loan Approval"):
     prediction = model.predict(input_data)[0]
     confidence = model.predict_proba(input_data)[0][int(prediction)] * 100
@@ -72,17 +72,13 @@ if st.button("🔍 Predict Loan Approval"):
     else:
         st.error(f"❌ Loan Rejected with {confidence:.2f}% confidence.")
 
-    # SHAP explanation
     st.markdown("### 🔍 SHAP Explanation (Feature Influence)")
 
-    # Get SHAP values (list for binary classification)
+    # Use legacy SHAP waterfall plot for single prediction
     shap_values = explainer.shap_values(input_data)
-
-    # Choose class 1 explanation
-    shap_values_instance = shap_values[1][0]
+    shap_values_instance = shap_values[1][0]  # Class 1 explanation
     expected_value = explainer.expected_value[1]
 
-    # Waterfall plot using legacy method
     fig, ax = plt.subplots(figsize=(10, 5))
     shap.plots._waterfall.waterfall_legacy(expected_value, shap_values_instance, input_data.iloc[0])
     st.pyplot(fig)
