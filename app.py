@@ -35,7 +35,7 @@ bank_asset_value = st.number_input("🏦 Bank Asset Value", min_value=0)
 education_encoded = 1 if education == "Graduate" else 0
 self_employed_encoded = 1 if self_employed == "Yes" else 0
 
-# Create input DataFrame with correct column order
+# Create input DataFrame
 input_data = pd.DataFrame([[
     no_of_dependents,
     education_encoded,
@@ -73,20 +73,6 @@ if st.button("🔍 Predict Loan Approval"):
         st.error(f"❌ Loan Rejected with {confidence:.2f}% confidence.")
 
     # SHAP explanation
-    st.markdown("### 🔍 SHAP Explanation (Feature Influence)")
-
-    # Get SHAP values using explainer
-    shap_values = explainer(input_data)
-
-    # Create SHAP Explanation object
-    shap_values_instance = shap_values.values[0]
-    expected_value = shap_values.base_values[0]
-
-    explanation = shap.Explanation(
-        values=shap_values_instance,
-        base_values=expected_value,
-        data=input_data.iloc[0],
-           # SHAP explanation
     st.markdown("### 🔍 SHAP Explanation (Feature Influence)")
 
     # Get SHAP values (list for binary classification)
