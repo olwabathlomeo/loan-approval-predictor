@@ -4,7 +4,6 @@ import pickle
 
 st.set_page_config(page_title="Loan Approval Predictor", page_icon="🏦")
 st.title("🏦 Loan Approval Predictor")
-st.markdown("This app predicts whether a loan will be **Approved** or **Rejected** based on applicant data.")
 
 # Load model and explainer
 with open('best_rf_model.pkl', 'rb') as model_file:
@@ -22,12 +21,14 @@ self_employed = st.selectbox("💼 Self Employed?", ["Yes", "No"])
 bank_asset_value = st.number_input("🏦 Bank Asset Value", min_value=0.0, value=15000.0)
 commercial_assets_value = st.number_input("🏭 Commercial Assets Value", min_value=0.0, value=20000.0)
 luxury_assets_value = st.number_input("💎 Luxury Assets Value", min_value=0.0, value=5000.0)
+residential_assets_value = st.number_input("🏠 Residential Assets Value", min_value=0.0, value=25000.0)
 loan_term = st.number_input("📅 Loan Term (months)", min_value=1, value=36)
 no_of_dependents = st.number_input("👨‍👩‍👧 Number of Dependents", min_value=0, value=0)
 
 education_encoded = 1 if education == "Graduate" else 0
 self_employed_encoded = 1 if self_employed == "Yes" else 0
 
+# Update the DataFrame to include the new feature, in the order your model was trained on!
 input_data = pd.DataFrame([[
     income_annum,
     loan_amount,
@@ -37,6 +38,7 @@ input_data = pd.DataFrame([[
     bank_asset_value,
     commercial_assets_value,
     luxury_assets_value,
+    residential_assets_value,
     loan_term,
     no_of_dependents
 ]], columns=[
@@ -48,6 +50,7 @@ input_data = pd.DataFrame([[
     "bank_asset_value",
     "commercial_assets_value",
     "luxury_assets_value",
+    "residential_assets_value",
     "loan_term",
     "no_of_dependents"
 ])
