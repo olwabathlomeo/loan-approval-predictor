@@ -11,48 +11,47 @@ with open('best_rf_model.pkl', 'rb') as model_file:
 with open('shap_explainer.pkl', 'rb') as explainer_file:
     explainer = pickle.load(explainer_file)
 
-# Input fields for all required features
-income_annum = st.number_input("📥 Annual Income", min_value=0.0, value=50000.0)
-loan_amount = st.number_input("💰 Loan Amount", min_value=0.0, value=10000.0)
-cibil_score = st.slider("📊 CIBIL Score", 300, 900, value=700)
+# Input fields for all required features (in correct order)
+no_of_dependents = st.number_input("👨‍👩‍👧 Number of Dependents", min_value=0, value=0)
 education = st.selectbox("🎓 Education Level", ["Graduate", "Not Graduate"])
 self_employed = st.selectbox("💼 Self Employed?", ["Yes", "No"])
-
-bank_asset_value = st.number_input("🏦 Bank Asset Value", min_value=0.0, value=15000.0)
+income_annum = st.number_input("📥 Annual Income", min_value=0.0, value=50000.0)
+loan_amount = st.number_input("💰 Loan Amount", min_value=0.0, value=10000.0)
+loan_term = st.number_input("📅 Loan Term (months)", min_value=1, value=36)
+cibil_score = st.slider("📊 CIBIL Score", 300, 900, value=700)
+residential_assets_value = st.number_input("🏠 Residential Assets Value", min_value=0.0, value=25000.0)
 commercial_assets_value = st.number_input("🏭 Commercial Assets Value", min_value=0.0, value=20000.0)
 luxury_assets_value = st.number_input("💎 Luxury Assets Value", min_value=0.0, value=5000.0)
-residential_assets_value = st.number_input("🏠 Residential Assets Value", min_value=0.0, value=25000.0)
-loan_term = st.number_input("📅 Loan Term (months)", min_value=1, value=36)
-no_of_dependents = st.number_input("👨‍👩‍👧 Number of Dependents", min_value=0, value=0)
+bank_asset_value = st.number_input("🏦 Bank Asset Value", min_value=0.0, value=15000.0)
 
 education_encoded = 1 if education == "Graduate" else 0
 self_employed_encoded = 1 if self_employed == "Yes" else 0
 
-# Update the DataFrame to include the new feature, in the order your model was trained on!
+# Ensure column order matches training
 input_data = pd.DataFrame([[
-    income_annum,
-    loan_amount,
-    cibil_score,
+    no_of_dependents,
     education_encoded,
     self_employed_encoded,
-    bank_asset_value,
+    income_annum,
+    loan_amount,
+    loan_term,
+    cibil_score,
+    residential_assets_value,
     commercial_assets_value,
     luxury_assets_value,
-    residential_assets_value,
-    loan_term,
-    no_of_dependents
+    bank_asset_value
 ]], columns=[
-    "income_annum",
-    "loan_amount",
-    "cibil_score",
+    "no_of_dependents",
     "education",
     "self_employed",
-    "bank_asset_value",
+    "income_annum",
+    "loan_amount",
+    "loan_term",
+    "cibil_score",
+    "residential_assets_value",
     "commercial_assets_value",
     "luxury_assets_value",
-    "residential_assets_value",
-    "loan_term",
-    "no_of_dependents"
+    "bank_asset_value"
 ])
 
 if st.button("🔍 Predict Loan Status"):
@@ -68,18 +67,20 @@ if st.button("🔍 Predict Loan Status"):
         st.markdown("### 🧠 SHAP Feature Impact")
         shap_values = explainer.shap_values(input_data)
         import shap
+        import matplotlib.pyplot as plt
         if isinstance(shap_values, list):
             values = shap_values[1][0]
             base_value = explainer.expected_value[1]
         else:
             values = shap_values[0]
             base_value = explainer.expected_value
+        fig, ax = plt.subplots()
         shap.waterfall_plot(shap.Explanation(
             values=values,
             base_values=base_value,
             data=input_data.iloc[0],
             feature_names=input_data.columns.tolist()
-        ), max_display=10)
-        st.pyplot()
+        ), max_display=10, show=False)
+        st.pyplot(fig)
     except Exception as e:
         st.error(f"Prediction or explanation failed: {e}")
