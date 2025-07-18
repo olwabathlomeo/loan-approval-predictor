@@ -1,17 +1,17 @@
 import streamlit as st
 import pandas as pd
 import pickle
+import shap
+import matplotlib.pyplot as plt
 
 st.set_page_config(page_title="Loan Approval Predictor", page_icon="🏦")
 st.title("🏦 Loan Approval Predictor")
 
-# Load model and explainer
 with open('best_rf_model.pkl', 'rb') as model_file:
     model = pickle.load(model_file)
 with open('shap_explainer.pkl', 'rb') as explainer_file:
     explainer = pickle.load(explainer_file)
 
-# Input fields for all required features (in correct order)
 no_of_dependents = st.number_input("👨‍👩‍👧 Number of Dependents", min_value=0, value=0)
 education = st.selectbox("🎓 Education Level", ["Graduate", "Not Graduate"])
 self_employed = st.selectbox("💼 Self Employed?", ["Yes", "No"])
@@ -27,7 +27,6 @@ bank_asset_value = st.number_input("🏦 Bank Asset Value", min_value=0.0, value
 education_encoded = 1 if education == "Graduate" else 0
 self_employed_encoded = 1 if self_employed == "Yes" else 0
 
-# Ensure column order matches training
 input_data = pd.DataFrame([[
     no_of_dependents,
     education_encoded,
@@ -66,28 +65,25 @@ if st.button("🔍 Predict Loan Status"):
 
         st.markdown("### 🧠 SHAP Feature Impact")
         shap_values = explainer.shap_values(input_data)
-import shap
-import matplotlib.pyplot as plt
+        pred_class = int(prediction)
+        if isinstance(shap_values, list):
+            values = shap_values[pred_class][0]
+            base_value = explainer.expected_value[pred_class]
+        else:
+            values = shap_values[0]
+            base_value = explainer.expected_value
 
-# Get predicted class
-pred_class = int(model.predict(input_data)[0])
-
-# For TreeExplainer, shap_values is a list (one array per class)
-if isinstance(shap_values, list):
-    values = shap_values[pred_class][0]  # [0] because batch size is 1
-    base_value = explainer.expected_value[pred_class]
-else:
-    # For other explainers, might be a 2D array
-    values = shap_values[0]
-    base_value = explainer.expected_value
-
-# Plot
-fig, ax = plt.subplots()
-shap.waterfall_plot(shap.Explanation(
-    values=values,
-    base_values=base_value,
-    data=input_data.iloc[0],
-    feature_names=input_data.columns.tolist()
-), max_display=10, show=False)
-st.pyplot(fig)    except Exception as e:
+        fig, ax = plt.subplots()
+        shap.waterfall_plot(
+            shap.Explanation(
+                values=values,
+                base_values=base_value,
+                data=input_data.iloc[0],
+                feature_names=input_data.columns.tolist()
+            ),
+            max_display=10,
+            show=False
+        )
+        st.pyplot(fig)
+    except Exception as e:
         st.error(f"Prediction or explanation failed: {e}")
