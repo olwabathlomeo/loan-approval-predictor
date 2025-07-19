@@ -50,4 +50,23 @@ input_data = pd.DataFrame([{
 
 # Prediction
 if st.button("Predict Loan Status"):
-    prediction = model.predict(i
+    prediction = model.predict(input_data)[0]
+    prediction_proba = model.predict_proba(input_data)[0]
+
+    st.subheader("📌 Prediction Result")
+    status = "✅ Loan Approved" if prediction == 1 else "❌ Loan Rejected"
+    confidence = round(100 * max(prediction_proba), 2)
+    st.write(f"{status} with confidence of **{confidence}%**")
+
+    # SHAP Explanation
+    explainer = shap.TreeExplainer(model)
+    shap_values = explainer.shap_values(input_data)
+
+    st.subheader("🔍 Explanation (SHAP)")
+    fig, ax = plt.subplots(figsize=(10, 4))
+    shap.plots.waterfall(shap.Explanation(
+        values=shap_values[1][0],
+        base_values=explainer.expected_value[1],
+        data=input_data.iloc[0]
+    ), max_display=10)
+    st.pyplot(fig)
