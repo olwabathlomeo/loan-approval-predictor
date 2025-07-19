@@ -4,6 +4,7 @@ import numpy as np
 import pickle
 import shap
 import matplotlib.pyplot as plt
+import streamlit.components.v1 as components
 
 # Set Streamlit page configuration
 st.set_page_config(page_title="Loan Approval Predictor", page_icon="🏦")
@@ -34,7 +35,7 @@ commercial_assets_value = st.number_input("Commercial Assets Value", min_value=0
 luxury_assets_value = st.number_input("Luxury Assets Value", min_value=0)
 bank_asset_value = st.number_input("Bank Asset Value", min_value=0)
 
-# Prepare data for prediction
+# Prepare input DataFrame
 input_data = {
     "no_of_dependents": no_of_dependents,
     "education": 1 if education == "Graduate" else 0,
@@ -51,8 +52,9 @@ input_data = {
 
 input_df = pd.DataFrame([input_data])
 
-# Predict button
+# Predict and explain
 if st.button("Predict"):
+    # Prediction
     prediction = model.predict(input_df)
     probability = model.predict_proba(input_df)[0]
 
@@ -61,47 +63,36 @@ if st.button("Predict"):
     else:
         st.error(f"❌ Loan Rejected with confidence of {round(probability[0]*100, 1)}%")
 
-        # SHAP Explanation
+    # SHAP Explanation
     st.subheader("🔍 Explanation (SHAP)")
     try:
-        import shap
-import matplotlib.pyplot as plt
-import streamlit.components.v1 as components
+        # Create SHAP explainer
+        explainer = shap.TreeExplainer(model)
+        shap_values = explainer.shap_values(input_df)
 
-# SHAP Explanation
-st.subheader("🔍 Explanation (SHAP)")
-try:
-    # Create SHAP explainer
-    explainer = shap.TreeExplainer(model)
-    shap_values = explainer.shap_values(input_df)
+        # Handle binary classification case
+        if isinstance(shap_values, list):
+            class_index = 1 if len(shap_values) > 1 else 0
+            sv = shap_values[class_index][0]
+            base_value = explainer.expected_value[class_index]
+        else:
+            sv = shap_values[0]
+            base_value = explainer.expected_value
 
-    # Pick the correct SHAP values for binary classification
-    if isinstance(shap_values, list):
-        class_index = 1 if len(shap_values) > 1 else 0
-        sv = shap_values[class_index][0]  # First row's SHAP values
-        base_value = explainer.expected_value[class_index]
-    else:
-        sv = shap_values[0]
-        base_value = explainer.expected_value
+        # Check shape match
+        if len(sv) != len(input_df.columns):
+            st.warning("SHAP explanation failed: Feature length mismatch.")
+        else:
+            shap.initjs()
+            force_plot_html = shap.force_plot(
+                base_value=base_value,
+                shap_values=sv,
+                features=input_df.iloc[0],
+                feature_names=input_df.columns.tolist(),
+                matplotlib=False,
+                show=False
+            ).html()
+            components.html(force_plot_html, height=300)
 
-    # Check if lengths match
-    if len(sv) != len(input_df.columns):
-        st.warning("SHAP explanation failed: Feature length mismatch.")
-    else:
-        # Initialize JS rendering
-        shap.initjs()
-
-        # Generate HTML force plot
-        force_plot_html = shap.force_plot(
-            base_value=base_value,
-            shap_values=sv,
-            features=input_df.iloc[0],
-            feature_names=input_df.columns.tolist(),
-            matplotlib=False,
-            show=False
-        ).html()
-
-        # Display in Streamlit
-        components.html(force_plot_html, height=300)
-except Exception as e:
-    st.warning(f"SHAP explanation failed: {e}")
+    except Exception as e:
+        st.warning(f"SHAP explanation failed: {e}")
