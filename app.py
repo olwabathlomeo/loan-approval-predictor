@@ -65,27 +65,21 @@ st.subheader("🔍 Explanation (SHAP)")
 
 try:
     explainer = shap.TreeExplainer(model)
-    shap_values = explainer.shap_values(input_df)
+    shap_values = explainer(input_df)  # This returns Explanation object in shap >= 0.20
     shap.initjs()
 
-    # Handle binary classification (list of arrays)
-    if isinstance(shap_values, list):
-        sv = shap_values[1][0]  # Class 1 SHAP values for the first row
-        base_value = explainer.expected_value[1]
-    else:
-        # Single array output
-        sv = shap_values[0]  # First row SHAP values
-        base_value = explainer.expected_value
-
-    # Force plot with correct order (SHAP v0.20+)
-    force_plot = shap.plots.force(
-        base_value,
-        sv,
+    # Generate force plot using shap.plots.force
+    st.write("SHAP Force Plot (class: Loan Approved)")
+    shap_plot = shap.plots.force(
+        shap_values[0].base_values,
+        shap_values[0].values,
         input_df.iloc[0]
     )
 
-    # Display in Streamlit
-    components.html(force_plot.html(), height=300)
+    # Display using streamlit components
+    import streamlit.components.v1 as components
+    components.html(shap.getjs(), height=0)  # Loads SHAP JS
+    components.html(shap_plot.html(), height=300)
 
 except Exception as e:
     st.warning(f"SHAP explanation failed: {e}")
