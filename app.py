@@ -61,32 +61,31 @@ if st.button("Predict"):
         st.error(f"❌ Loan Rejected with {round(probability[0]*100, 1)}% confidence.")
 
         # SHAP Explanation
-    st.subheader("🔍 Explanation (SHAP)")
+st.subheader("🔍 Explanation (SHAP)")
 
-    try:
-        explainer = shap.TreeExplainer(model)
-        shap_values = explainer.shap_values(input_df)
-        shap.initjs()
+try:
+    explainer = shap.TreeExplainer(model)
+    shap_values = explainer.shap_values(input_df)
+    shap.initjs()
 
-        # Handle both list and array output
-        if isinstance(shap_values, list):
-            # Binary classification (list of two arrays)
-            sv = shap_values[1][0]  # class 1, first sample
-            base_value = explainer.expected_value[1]
-        else:
-            # Single array (e.g. 1D output)
-            sv = shap_values[0]  # first sample
-            base_value = explainer.expected_value
+    # Handle binary classification (list of arrays)
+    if isinstance(shap_values, list):
+        sv = shap_values[1][0]  # Class 1 SHAP values for the first row
+        base_value = explainer.expected_value[1]
+    else:
+        # Single array output
+        sv = shap_values[0]  # First row SHAP values
+        base_value = explainer.expected_value
 
-        # Create JS force plot
-        force_plot = shap.plots.force(
-            base_value,
-            sv,
-            input_df.iloc[0],
-            matplotlib=False,
-            show=False
-        )
-        components.html(force_plot.html(), height=300)
+    # Force plot with correct order (SHAP v0.20+)
+    force_plot = shap.plots.force(
+        base_value,
+        sv,
+        input_df.iloc[0]
+    )
 
-    except Exception as e:
-        st.warning(f"SHAP explanation failed: {e}")
+    # Display in Streamlit
+    components.html(force_plot.html(), height=300)
+
+except Exception as e:
+    st.warning(f"SHAP explanation failed: {e}")
