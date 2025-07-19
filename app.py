@@ -61,25 +61,27 @@ if st.button("Predict"):
     else:
         st.error(f"❌ Loan Rejected with confidence of {round(probability[0]*100, 1)}%")
 
-    # SHAP Explanation
+        # SHAP Explanation
     st.subheader("🔍 Explanation (SHAP)")
     try:
+        # Create SHAP explainer
         explainer = shap.TreeExplainer(model)
         shap_values = explainer.shap_values(input_df)
 
-        # Select class index if binary classifier
+        # Select class index for binary classification
         class_index = 1 if isinstance(shap_values, list) else 0
 
-        # Force plot
-        fig, ax = plt.subplots(figsize=(10, 3))
-        shap.force_plot(
-            base_value=explainer.expected_value[class_index] if isinstance(explainer.expected_value, (list, np.ndarray)) else explainer.expected_value,
-            shap_values=shap_values[class_index][0] if isinstance(shap_values, list) else shap_values[0],
-            features=input_df.iloc[0],
-            matplotlib=True,
-            show=False
+        # Only plot for a single sample
+        shap.initjs()
+        st_shap = st.components.v1.html(
+            shap.force_plot(
+                base_value=explainer.expected_value[class_index],
+                shap_values=shap_values[class_index][0],
+                features=input_df.iloc[0],
+                feature_names=input_df.columns.tolist(),
+                matplotlib=False
+            ).html(),
+            height=300,
         )
-        st.pyplot(fig)
-
     except Exception as e:
         st.warning(f"SHAP explanation failed: {e}")
