@@ -60,27 +60,33 @@ if st.button("Predict"):
     else:
         st.error(f"❌ Loan Rejected with {round(probability[0]*100, 1)}% confidence.")
 
-    # SHAP Explanation
+        # SHAP Explanation
     st.subheader("🔍 Explanation (SHAP)")
 
     try:
-        # Create SHAP explainer
         explainer = shap.TreeExplainer(model)
         shap_values = explainer.shap_values(input_df)
-
-        # Handle binary classification case
-        class_idx = 1 if isinstance(shap_values, list) and len(shap_values) > 1 else 0
         shap.initjs()
 
-        # Generate and display force plot (SHAP v0.20+ compatible)
+        # Handle both list and array output
+        if isinstance(shap_values, list):
+            # Binary classification (list of two arrays)
+            sv = shap_values[1][0]  # class 1, first sample
+            base_value = explainer.expected_value[1]
+        else:
+            # Single array (e.g. 1D output)
+            sv = shap_values[0]  # first sample
+            base_value = explainer.expected_value
+
+        # Create JS force plot
         force_plot = shap.plots.force(
-            explainer.expected_value[class_idx],
-            shap_values[class_idx][0] if isinstance(shap_values, list) else shap_values[0],
+            base_value,
+            sv,
             input_df.iloc[0],
             matplotlib=False,
             show=False
         )
-
         components.html(force_plot.html(), height=300)
+
     except Exception as e:
         st.warning(f"SHAP explanation failed: {e}")
