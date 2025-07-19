@@ -80,14 +80,19 @@ input_data = pd.DataFrame([[
 education_map = {"Graduate": 0, "Not Graduate": 1}
 self_employed_map = {"No": 0, "Yes": 1}
 
-# Prepare input
+# Create input data
 input_data = pd.DataFrame([{
-    "income_annum": income_annum,
-    "loan_amount": loan_amount,
-    "cibil_score": cibil_score,
+    "no_of_dependents": no_of_dependents,
     "education": education_map[education],
     "self_employed": self_employed_map[self_employed],
-    "asset_value": asset_value
+    "income_annum": income_annum,
+    "loan_amount": loan_amount,
+    "loan_term": loan_term,
+    "cibil_score": cibil_score,
+    "residential_assets_value": residential_assets_value,
+    "commercial_assets_value": commercial_assets_value,
+    "luxury_assets_value": luxury_assets_value,
+    "bank_asset_value": bank_asset_value
 }])
 
 # Make prediction
