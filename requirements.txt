@@ -1,6 +1,7 @@
+shap
+matplotlib
+ipython
 streamlit
 pandas
 numpy
-matplotlib
-shap
 scikit-learn
