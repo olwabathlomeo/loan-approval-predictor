@@ -64,24 +64,44 @@ if st.button("Predict"):
         # SHAP Explanation
     st.subheader("🔍 Explanation (SHAP)")
     try:
-        # Create SHAP explainer
-        explainer = shap.TreeExplainer(model)
-        shap_values = explainer.shap_values(input_df)
+        import shap
+import matplotlib.pyplot as plt
+import streamlit.components.v1 as components
 
-        # Select class index for binary classification
-        class_index = 1 if isinstance(shap_values, list) else 0
+# SHAP Explanation
+st.subheader("🔍 Explanation (SHAP)")
+try:
+    # Create SHAP explainer
+    explainer = shap.TreeExplainer(model)
+    shap_values = explainer.shap_values(input_df)
 
-        # Only plot for a single sample
+    # Pick the correct SHAP values for binary classification
+    if isinstance(shap_values, list):
+        class_index = 1 if len(shap_values) > 1 else 0
+        sv = shap_values[class_index][0]  # First row's SHAP values
+        base_value = explainer.expected_value[class_index]
+    else:
+        sv = shap_values[0]
+        base_value = explainer.expected_value
+
+    # Check if lengths match
+    if len(sv) != len(input_df.columns):
+        st.warning("SHAP explanation failed: Feature length mismatch.")
+    else:
+        # Initialize JS rendering
         shap.initjs()
-        st_shap = st.components.v1.html(
-            shap.force_plot(
-                base_value=explainer.expected_value[class_index],
-                shap_values=shap_values[class_index][0],
-                features=input_df.iloc[0],
-                feature_names=input_df.columns.tolist(),
-                matplotlib=False
-            ).html(),
-            height=300,
-        )
-    except Exception as e:
-        st.warning(f"SHAP explanation failed: {e}")
+
+        # Generate HTML force plot
+        force_plot_html = shap.force_plot(
+            base_value=base_value,
+            shap_values=sv,
+            features=input_df.iloc[0],
+            feature_names=input_df.columns.tolist(),
+            matplotlib=False,
+            show=False
+        ).html()
+
+        # Display in Streamlit
+        components.html(force_plot_html, height=300)
+except Exception as e:
+    st.warning(f"SHAP explanation failed: {e}")
