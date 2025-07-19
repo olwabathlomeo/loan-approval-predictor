@@ -23,12 +23,58 @@ X_train = pd.read_csv("X_train.csv")
 
 # Sidebar - Input fields
 st.sidebar.header("📝 Applicant Information")
-income_annum = st.sidebar.number_input("Annual Income (KSh)", min_value=10000, max_value=1000000, step=1000)
-loan_amount = st.sidebar.number_input("Loan Amount (KSh)", min_value=5000, max_value=500000, step=1000)
-cibil_score = st.sidebar.slider("CIBIL Score", 300, 900, 650)
+
+no_of_dependents = st.sidebar.number_input("Number of Dependents")
 education = st.sidebar.selectbox("Education", ["Graduate", "Not Graduate"])
 self_employed = st.sidebar.selectbox("Self Employed", ["Yes", "No"])
-asset_value = st.sidebar.number_input("Asset Value (KSh)", min_value=0, max_value=1000000, step=5000)
+income_annum = st.sidebar.number_input("Annual Income (KSh)")
+loan_amount = st.sidebar.number_input("Loan Amount (KSh)")
+loan_term = st.sidebar.number_input("Loan Term (Months)")
+cibil_score = st.sidebar.slider("CIBIL Score", min_value=300, max_value=900)  # Set actual min and max
+residential_assets_value = st.sidebar.number_input("Residential Assets Value (KSh)")
+commercial_assets_value = st.sidebar.number_input("Commercial Assets Value (KSh)")
+luxury_assets_value = st.sidebar.number_input("Luxury Assets Value (KSh)")
+bank_asset_value = st.sidebar.number_input("Bank Asset Value (KSh)")
+
+# Encoding mappings
+education_map = {"Graduate": 0, "Not Graduate": 1}
+self_employed_map = {"No": 0, "Yes": 1}
+
+# Prepare input using the correct column order
+input_data = pd.DataFrame([[
+    no_of_dependents,
+    education_map[education],
+    self_employed_map[self_employed],
+    income_annum,
+    loan_amount,
+    loan_term,
+    cibil_score,
+    residential_assets_value,
+    commercial_assets_value,
+    luxury_assets_value,
+    bank_asset_value
+]], columns=X_train.columns)
+
+
+# Encoding mappings
+education_map = {"Graduate": 0, "Not Graduate": 1}
+self_employed_map = {"No": 0, "Yes": 1}
+
+# Prepare input using the exact training columns
+input_data = pd.DataFrame([[
+    no_of_dependents,
+    education_map[education],
+    self_employed_map[self_employed],
+    income_annum,
+    loan_amount,
+    loan_term,
+    cibil_score,
+    residential_assets_value,
+    commercial_assets_value,
+    luxury_assets_value,
+    bank_asset_value
+]], columns=X_train.columns)
+
 
 # Encoding mappings
 education_map = {"Graduate": 0, "Not Graduate": 1}
