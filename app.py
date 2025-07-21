@@ -5,6 +5,8 @@ import joblib
 import shap
 import matplotlib.pyplot as plt
 import os
+st.write("📁 Current files:", os.listdir('.'))
+
 
 # Page setup
 st.set_page_config(page_title="Loan Approval Predictor", layout="centered")
