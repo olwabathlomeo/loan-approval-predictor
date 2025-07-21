@@ -10,7 +10,7 @@ import xgboost as xgb
 st.set_page_config(page_title="Loan Approval Predictor", layout="centered")
 
 # Load model and scaler
-model = joblib.load("")
+model = joblib.load("best_rf_model.pkl")
 scaler = joblib.load("scaler.pkl")
 
 st.title("🏦 Loan Approval Predictor")
