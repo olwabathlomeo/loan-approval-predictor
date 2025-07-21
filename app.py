@@ -4,11 +4,11 @@ import numpy as np
 import joblib
 import shap
 import matplotlib.pyplot as plt
-import xgboost as xgb
 
-# Page config
+# Streamlit page config
 st.set_page_config(page_title="Loan Approval Predictor", layout="centered")
 
+# Load model and scaler
 try:
     model = joblib.load("best_rf_model.pkl")
     scaler = joblib.load("scaler.pkl")
@@ -16,6 +16,7 @@ except FileNotFoundError as e:
     st.error("🚫 Required model or scaler file not found. Please upload 'best_rf_model.pkl' and 'scaler.pkl'.")
     st.stop()
 
+# Title
 st.title("🏦 Loan Approval Predictor")
 st.write("Enter applicant details to check if the loan will be approved.")
 
@@ -32,7 +33,7 @@ com_assets = st.number_input("Commercial Assets Value", min_value=0)
 lux_assets = st.number_input("Luxury Assets Value", min_value=0)
 bank_assets = st.number_input("Bank Asset Value", min_value=0)
 
-# Prepare input
+# Prepare input data
 input_data = {
     "no_of_dependents": dependents,
     "education": 1 if education == "Graduate" else 0,
@@ -46,15 +47,14 @@ input_data = {
     "luxury_assets_value": lux_assets,
     "bank_asset_value": bank_assets
 }
-
 input_df = pd.DataFrame([input_data])
 
-# Prediction button
+# Predict and explain
 if st.button("Predict Loan Status"):
     # Scale input
     scaled_input = scaler.transform(input_df)
 
-    # Make prediction
+    # Prediction
     prediction = model.predict(scaled_input)[0]
     confidence = model.predict_proba(scaled_input)[0][prediction]
 
@@ -81,20 +81,18 @@ if st.button("Predict Loan Status"):
     ax.set_xlabel("Contribution to Prediction")
     st.pyplot(fig)
 
-    # Adaptive explanation
+    # Adaptive textual guide
     if prediction == 1:
         st.markdown(f"""
-    🧾 **Interpretation Guide (Approved ✅)**
-
-    - The model is **{confidence:.2%} confident** that the loan should be approved.
-    - ✅ **Green bars** = Features that helped with approval.
-    - ❌ **Red bars** = Features that pulled down the approval score.
-    """)
+        🧾 **Interpretation Guide (Approved ✅)**  
+        - The model is **{confidence:.2%} confident** that the loan should be approved.  
+        - ✅ **Green bars** = Features that helped with approval.  
+        - ❌ **Red bars** = Features that pulled down the approval score.
+        """)
     else:
         st.markdown(f"""
-    🧾 **Interpretation Guide (Rejected ❌)**
-
-    - The model is **{confidence:.2%} confident** that the loan should be rejected.
-    - ❌ **Red bars** = Features that pushed the model toward rejection.
-    - ✅ **Green bars** = Helpful features, but not strong enough to reverse the decision.
-    """)
+        🧾 **Interpretation Guide (Rejected ❌)**  
+        - The model is **{confidence:.2%} confident** that the loan should be rejected.  
+        - ❌ **Red bars** = Features that pushed the model toward rejection.  
+        - ✅ **Green bars** = Helpful features, but not strong enough to reverse the decision.
+        """)
