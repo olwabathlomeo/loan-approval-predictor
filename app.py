@@ -4,21 +4,24 @@ import numpy as np
 import joblib
 import shap
 import matplotlib.pyplot as plt
+import os
 
-# Streamlit page config
+# Page setup
 st.set_page_config(page_title="Loan Approval Predictor", layout="centered")
 
-# Load model and scaler
-try:
-    model = joblib.load("best_rf_model.pkl")
-    scaler = joblib.load("scaler.pkl")
-except FileNotFoundError as e:
-    st.error("🚫 Required model or scaler file not found. Please upload 'best_rf_model.pkl' and 'scaler.pkl'.")
+# File check and load
+model_path = "best_rf_model.pkl"
+scaler_path = "scaler.pkl"
+
+if not os.path.exists(model_path) or not os.path.exists(scaler_path):
+    st.error(f"🚫 Model or scaler file missing! Files in directory: {os.listdir('.')}")
     st.stop()
 
-# Title
-st.title("🏦 Loan Approval Predictor")
-st.write("Enter applicant details to check if the loan will be approved.")
+model = joblib.load(model_path)
+scaler = joblib.load(scaler_path)
+
+st.title("🏦 Loan Approval Predictor (Random Forest)")
+st.markdown("Enter applicant details below to predict loan approval status:")
 
 # Input form
 dependents = st.number_input("No. of Dependents", min_value=0, step=1)
@@ -47,25 +50,23 @@ input_data = {
     "luxury_assets_value": lux_assets,
     "bank_asset_value": bank_assets
 }
+
 input_df = pd.DataFrame([input_data])
 
-# Predict and explain
-if st.button("Predict Loan Status"):
-    # Scale input
+# Predict
+if st.button("🔍 Predict Loan Status"):
     scaled_input = scaler.transform(input_df)
-
-    # Prediction
     prediction = model.predict(scaled_input)[0]
     confidence = model.predict_proba(scaled_input)[0][prediction]
 
     if prediction == 1:
-        st.success(f"✅ Loan Approved with confidence: {confidence:.2f}")
+        st.success(f"✅ Loan Approved (Confidence: {confidence:.2%})")
     else:
-        st.error(f"❌ Loan Rejected with confidence: {confidence:.2f}")
+        st.error(f"❌ Loan Rejected (Confidence: {confidence:.2%})")
 
     # SHAP Explanation
-    st.subheader("🧠 SHAP Explanation: Why was this decision made?")
-    explainer = shap.Explainer(model)
+    st.subheader("📊 SHAP Feature Contribution")
+    explainer = shap.Explainer(model, input_df)
     shap_values = explainer(input_df)
 
     shap_df = pd.DataFrame({
@@ -73,26 +74,24 @@ if st.button("Predict Loan Status"):
         "SHAP Value": shap_values.values[0]
     }).sort_values(by="SHAP Value", key=abs, ascending=True)
 
-    colors = shap_df["SHAP Value"].apply(lambda x: 'green' if x > 0 else 'red')
+    colors = shap_df["SHAP Value"].apply(lambda x: "green" if x > 0 else "red")
 
     fig, ax = plt.subplots(figsize=(8, 5))
     ax.barh(shap_df["Feature"], shap_df["SHAP Value"], color=colors)
-    ax.set_title("Feature Impact (SHAP values)")
-    ax.set_xlabel("Contribution to Prediction")
+    ax.set_xlabel("SHAP Value (Impact on Decision)")
+    ax.set_title("Top Feature Contributions")
     st.pyplot(fig)
 
-    # Adaptive textual guide
+    # Adaptive explanation
+    st.markdown("#### 🧠 Interpretation:")
     if prediction == 1:
-        st.markdown(f"""
-        🧾 **Interpretation Guide (Approved ✅)**  
-        - The model is **{confidence:.2%} confident** that the loan should be approved.  
-        - ✅ **Green bars** = Features that helped with approval.  
-        - ❌ **Red bars** = Features that pulled down the approval score.
+        st.markdown("""
+        - ✅ **Green bars**: Features that **contributed positively** to loan approval.
+        - ❌ **Red bars**: Features that could have reduced confidence but were outweighed.
         """)
     else:
-        st.markdown(f"""
-        🧾 **Interpretation Guide (Rejected ❌)**  
-        - The model is **{confidence:.2%} confident** that the loan should be rejected.  
-        - ❌ **Red bars** = Features that pushed the model toward rejection.  
-        - ✅ **Green bars** = Helpful features, but not strong enough to reverse the decision.
+        st.markdown("""
+        - ❌ **Red bars**: Features that **led to rejection** of the loan.
+        - ✅ **Green bars**: Positive features, but not strong enough to get approval.
         """)
+
