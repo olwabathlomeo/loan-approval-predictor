@@ -9,9 +9,12 @@ import xgboost as xgb
 # Page config
 st.set_page_config(page_title="Loan Approval Predictor", layout="centered")
 
-# Load model and scaler
-model = joblib.load("best_rf_model.pkl")
-scaler = joblib.load("scaler.pkl")
+try:
+    model = joblib.load("best_rf_model.pkl")
+    scaler = joblib.load("scaler.pkl")
+except FileNotFoundError as e:
+    st.error("🚫 Required model or scaler file not found. Please upload 'best_rf_model.pkl' and 'scaler.pkl'.")
+    st.stop()
 
 st.title("🏦 Loan Approval Predictor")
 st.write("Enter applicant details to check if the loan will be approved.")
